@@ -1,0 +1,38 @@
+########################################
+# SERVICE 1 & SERVICE 2 (Java / Maven)
+########################################
+
+# Maven build output
+service1/target/
+service2/target/
+
+# Compiled class files
+service1/**/*.class
+service2/**/*.class
+
+# Logs
+service1/logs/
+service2/logs/
+service1/*.log
+service2/*.log
+
+# Environment files
+service1/.env
+service1/.env.*
+service2/.env
+service2/.env.*
+
+# Secrets / keys
+service1/*.pem
+service1/*.key
+service1/*.crt
+service1/key.json
+
+service2/*.pem
+service2/*.key
+service2/*.crt
+service2/key.json
+
+# OS junk
+service1/.DS_Store
+service2/.DS_Store

@@ -1,0 +1,15 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: service1
+
+service2:
+  url: ${SERVICE2_URL:http://service2:8081}
+
+logging:
+  level:
+    com.example.service1: INFO
+    org.springframework.web: INFO
+

@@ -1,0 +1,70 @@
+name: CI-CD-GKE-TERRAFORM
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: asia-south1
+  REPO: my-repo
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # ---------------- CHECKOUT ----------------
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # ---------------- AUTH GCP ----------------
+    - name: Authenticate to GCP
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Set up gcloud
+      uses: google-github-actions/setup-gcloud@v2
+
+    # ---------------- GKE AUTH ----------------
+    - name: Get GKE credentials
+      run: |
+        gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER }} \
+        --region ${{ secrets.GKE_REGION }} \
+        --project $PROJECT_ID
+
+    # ---------------- DOCKER AUTH ----------------
+    - name: Configure Docker
+      run: |
+        gcloud auth configure-docker asia-south1-docker.pkg.dev
+
+    # ---------------- BUILD SERVICE1 ----------------
+    - name: Build Service1
+      run: |
+        cd service1
+        mvn clean package -DskipTests
+        docker build -t asia-south1-docker.pkg.dev/$PROJECT_ID/$REPO/service1:${{ github.sha }} .
+        docker push asia-south1-docker.pkg.dev/$PROJECT_ID/$REPO/service1:${{ github.sha }}
+
+    # ---------------- BUILD SERVICE2 ----------------
+    - name: Build Service2
+      run: |
+        cd service2
+        mvn clean package -DskipTests
+        docker build -t asia-south1-docker.pkg.dev/$PROJECT_ID/$REPO/service2:${{ github.sha }} .
+        docker push asia-south1-docker.pkg.dev/$PROJECT_ID/$REPO/service2:${{ github.sha }}
+
+    # ---------------- TERRAFORM ----------------
+    - name: Terraform Init
+      run: |
+        cd terraform
+        terraform init
+
+    - name: Terraform Apply
+      run: |
+        cd terraform
+        terraform apply -auto-approve \
+          -var="service1_image=asia-south1-docker.pkg.dev/$PROJECT_ID/$REPO/service1:${{ github.sha }}" \
+          -var="service2_image=asia-south1-docker.pkg.dev/$PROJECT_ID/$REPO/service2:${{ github.sha }}"
