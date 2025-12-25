@@ -1,9 +1,12 @@
-data "google_client_config" "default" {}
+terraform {
+  required_providers {
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.30"
+    }
+  }
+}
 
 provider "kubernetes" {
-  host                   = google_container_cluster.gke.endpoint
-  token                  = data.google_client_config.default.access_token
-  cluster_ca_certificate = base64decode(
-    google_container_cluster.gke.master_auth[0].cluster_ca_certificate
-  )
+  config_path = "~/.kube/config"
 }
