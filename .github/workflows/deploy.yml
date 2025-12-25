@@ -57,6 +57,14 @@ jobs:
         docker push asia-south1-docker.pkg.dev/$PROJECT_ID/$REPO/service2:${{ github.sha }}
 
     # ---------------- TERRAFORM ----------------
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.6.6
+
+    - name: Verify Terraform
+      run: terraform -v
+
     - name: Terraform Init
       run: |
         cd terraform
