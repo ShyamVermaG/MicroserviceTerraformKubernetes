@@ -1,3 +1,3 @@
-output "vm_public_ip" {
-  value = google_compute_instance.java_vm.network_interface[0].access_config[0].nat_ip
+output "service1_lb_ip" {
+  value = kubernetes_service.service1.status[0].load_balancer[0].ingress[0].ip
 }
