@@ -1,3 +1,10 @@
+############################
+# VARIABLES
+############################
+variable "service1_image" {
+  type        = string
+  description = "Docker image for service1"
+}
 
 ############################
 # DEPLOYMENT : service1
