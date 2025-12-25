@@ -61,7 +61,7 @@ resource "kubernetes_deployment" "service1" {
 
           liveness_probe {
             http_get {
-              path = "/actuator/health"
+              path = "/api/data/health"
               port = 8080
             }
             initial_delay_seconds = 30
@@ -70,7 +70,7 @@ resource "kubernetes_deployment" "service1" {
 
           readiness_probe {
             http_get {
-              path = "/actuator/health"
+              path = "/api/data/health"
               port = 8080
             }
             initial_delay_seconds = 20

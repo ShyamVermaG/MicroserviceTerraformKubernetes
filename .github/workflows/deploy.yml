@@ -73,6 +73,7 @@ jobs:
     - name: Terraform Apply
       run: |
         cd terraform
+        export TF_LOG=TRACE
         terraform apply -auto-approve \
           -var="service1_image=asia-south1-docker.pkg.dev/$PROJECT_ID/$REPO/service1:${{ github.sha }}" \
           -var="service2_image=asia-south1-docker.pkg.dev/$PROJECT_ID/$REPO/service2:${{ github.sha }}"
