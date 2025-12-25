@@ -28,6 +28,10 @@ jobs:
     - name: Set up gcloud
       uses: google-github-actions/setup-gcloud@v2
 
+    - name: Install GKE auth plugin
+      run: |
+        gcloud components install gke-gcloud-auth-plugin --quiet
+
     # ---------------- GKE AUTH ----------------
     - name: Get GKE credentials
       run: |
