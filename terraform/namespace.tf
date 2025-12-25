@@ -1,4 +1,4 @@
-resource "kubernetes_namespace" "microservices" {
+resource "kubernetes_namespace_v1" "microservices" {
   metadata {
     name = "microservices"
   }

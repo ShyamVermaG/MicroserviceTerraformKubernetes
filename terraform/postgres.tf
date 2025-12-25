@@ -1,7 +1,7 @@
-# ---------------- PVC ----------------
-resource "kubernetes_persistent_volume_claim" "postgres_pvc" {
+resource "kubernetes_persistent_volume_claim_v1" "postgres_pvc" {
   metadata {
-    name = "postgres-pvc"
+    name      = "postgres-pvc"
+    namespace = kubernetes_namespace_v1.microservices.metadata[0].name
   }
 
   spec {
@@ -12,38 +12,20 @@ resource "kubernetes_persistent_volume_claim" "postgres_pvc" {
         storage = "1Gi"
       }
     }
+
+    storage_class_name = "standard"
   }
 }
 
-# ---------------- CONFIG MAP ----------------
-resource "kubernetes_config_map" "postgres_config" {
+resource "kubernetes_deployment_v1" "postgres" {
+  depends_on = [kubernetes_persistent_volume_claim_v1.postgres_pvc]
+
   metadata {
-    name = "postgres-config"
-  }
-
-  data = {
-    POSTGRES_DB   = "testdb"
-    POSTGRES_USER = "postgres"
-  }
-}
-
-# ---------------- SECRET ----------------
-resource "kubernetes_secret" "postgres_secret" {
-  metadata {
-    name = "postgres-secret"
-  }
-
-  data = {
-    POSTGRES_PASSWORD = base64encode("postgres")
-  }
-
-  type = "Opaque"
-}
-
-# ---------------- DEPLOYMENT ----------------
-resource "kubernetes_deployment" "postgres" {
-  metadata {
-    name = "postgres"
+    name      = "postgres"
+    namespace = kubernetes_namespace_v1.microservices.metadata[0].name
+    labels = {
+      app = "postgres"
+    }
   }
 
   spec {
@@ -65,69 +47,38 @@ resource "kubernetes_deployment" "postgres" {
       spec {
         container {
           name  = "postgres"
-          image = "postgres:15-alpine"
+          image = "postgres:15"
+
+          env {
+            name  = "POSTGRES_DB"
+            value = "mydb"
+          }
+
+          env {
+            name  = "POSTGRES_USER"
+            value = "admin"
+          }
+
+          env {
+            name  = "POSTGRES_PASSWORD"
+            value = "admin123"
+          }
 
           port {
             container_port = 5432
           }
 
-          env {
-            name  = "PGDATA"
-            value = "/var/lib/postgresql/data/pgdata"
-          }
-
-          env {
-            name = "POSTGRES_DB"
-            value_from {
-              config_map_key_ref {
-                name = kubernetes_config_map.postgres_config.metadata[0].name
-                key  = "POSTGRES_DB"
-              }
-            }
-          }
-
-          env {
-            name = "POSTGRES_USER"
-            value_from {
-              config_map_key_ref {
-                name = kubernetes_config_map.postgres_config.metadata[0].name
-                key  = "POSTGRES_USER"
-              }
-            }
-          }
-
-          env {
-            name = "POSTGRES_PASSWORD"
-            value_from {
-              secret_key_ref {
-                name = kubernetes_secret.postgres_secret.metadata[0].name
-                key  = "POSTGRES_PASSWORD"
-              }
-            }
-          }
-
           volume_mount {
-            name       = "postgres-storage"
+            name       = "pgdata"
             mount_path = "/var/lib/postgresql/data"
-          }
-
-          resources {
-            requests = {
-              memory = "256Mi"
-              cpu    = "250m"
-            }
-            limits = {
-              memory = "512Mi"
-              cpu    = "500m"
-            }
           }
         }
 
         volume {
-          name = "postgres-storage"
+          name = "pgdata"
 
           persistent_volume_claim {
-            claim_name = kubernetes_persistent_volume_claim.postgres_pvc.metadata[0].name
+            claim_name = kubernetes_persistent_volume_claim_v1.postgres_pvc.metadata[0].name
           }
         }
       }
@@ -135,10 +86,10 @@ resource "kubernetes_deployment" "postgres" {
   }
 }
 
-# ---------------- SERVICE ----------------
-resource "kubernetes_service" "postgres" {
+resource "kubernetes_service_v1" "postgres" {
   metadata {
-    name = "postgres"
+    name      = "postgres"
+    namespace = kubernetes_namespace_v1.microservices.metadata[0].name
   }
 
   spec {

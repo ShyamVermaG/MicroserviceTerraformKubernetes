@@ -1,4 +1,6 @@
 terraform {
+  required_version = ">= 1.6.0"
+
   required_providers {
     kubernetes = {
       source  = "hashicorp/kubernetes"
@@ -8,5 +10,7 @@ terraform {
 }
 
 provider "kubernetes" {
-  config_path = "~/.kube/config"
+  host                   = var.kube_host
+  token                  = var.kube_token
+  cluster_ca_certificate = base64decode(var.kube_ca)
 }

@@ -78,6 +78,14 @@ jobs:
       run: |
         cd terraform
         export TF_LOG=TRACE
+        terraform import kubernetes_deployment_v1.service1 microservices/service1
+        terraform import kubernetes_service_v1.service1 microservices/service1
+
+        terraform import kubernetes_deployment_v1.service2 microservices/service2
+        terraform import kubernetes_service_v1.service2 microservices/service2
+
+        terraform import kubernetes_deployment_v1.postgres microservices/postgres
+        terraform import kubernetes_service_v1.postgres microservices/postgres
         terraform apply -auto-approve \
           -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
           -var="service1_image=asia-south1-docker.pkg.dev/$PROJECT_ID/$REPO/service1:${{ github.sha }}" \
