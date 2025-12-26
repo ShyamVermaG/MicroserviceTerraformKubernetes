@@ -1,5 +1,4 @@
 resource "kubernetes_persistent_volume_claim" "postgres_pvc" {
-  wait_for_rollout = false
 
   metadata {
     name      = "postgres-pvc"
@@ -23,6 +22,7 @@ resource "kubernetes_persistent_volume_claim" "postgres_pvc" {
 
 resource "kubernetes_deployment" "postgres" {
   depends_on = [kubernetes_persistent_volume_claim.postgres_pvc]
+  wait_for_rollout = false
 
   metadata {
     name      = "postgres"
