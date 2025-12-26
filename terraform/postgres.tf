@@ -15,6 +15,8 @@ resource "kubernetes_persistent_volume_claim" "postgres_pvc" {
 
     storage_class_name = "standard-rwo"
   }
+    wait_until_bound = false
+
 }
 
 resource "kubernetes_deployment" "postgres" {
