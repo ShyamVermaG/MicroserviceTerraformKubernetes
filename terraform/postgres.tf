@@ -13,7 +13,7 @@ resource "kubernetes_persistent_volume_claim" "postgres_pvc" {
       }
     }
 
-    storage_class_name = "standard"
+    storage_class_name = "standard-rwo"
   }
 }
 
