@@ -73,24 +73,22 @@ jobs:
     - name: Terraform Init
       run: |
         cd terraform
-        terraform init 
+        terraform init
+         
+    - name: Import existing resources if missing
+      run: |
+          terraform state list | grep -q kubernetes_namespace.microservices || \
+          terraform import kubernetes_namespace.microservices microservices
+          terraform state list | grep -q kubernetes_deployment.service1 || \
+          terraform import kubernetes_deployment.service1 microservices/service1
+          terraform state list | grep -q kubernetes_deployment.service2 || \
+          terraform import kubernetes_deployment.service2 microservices/service2
+   
 
     - name: Terraform Apply
       run: |
         cd terraform
         export TF_LOG=TRACE
-        #!/bin/bash
-        # Import namespace if not already in state
-        terraform state list | grep -q kubernetes_namespace.microservices || \
-        terraform import kubernetes_namespace.microservices microservices
-
-        # Import deployments
-        terraform state list | grep -q kubernetes_deployment.service1 || \
-        terraform import kubernetes_deployment.service1 microservices/service1
-
-        terraform state list | grep -q kubernetes_deployment.service2 || \
-        terraform import kubernetes_deployment.service2 microservices/service2    
-        
         terraform plan
         terraform apply -auto-approve \
           -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
