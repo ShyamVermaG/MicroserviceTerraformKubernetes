@@ -77,6 +77,7 @@ jobs:
          
     - name: Import existing resources if missing
       run: |
+          cd terraform
           terraform state list | grep -q kubernetes_namespace.microservices || \
           terraform import kubernetes_namespace.microservices microservices
           terraform state list | grep -q kubernetes_deployment.service1 || \
