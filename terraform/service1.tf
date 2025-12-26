@@ -16,6 +16,9 @@ resource "kubernetes_deployment" "service1" {
       app = "service1"
     }
   }
+  lifecycle {
+    prevent_destroy = true
+  }
 
   spec {
     replicas = 1
