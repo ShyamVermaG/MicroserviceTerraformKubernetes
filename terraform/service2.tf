@@ -10,6 +10,8 @@ variable "service2_image" {
 # DEPLOYMENT : service2
 ############################
 resource "kubernetes_deployment" "service2" {
+  wait_for_rollout = false
+
   metadata {
     name      = "service2"
     namespace = "microservices"
@@ -85,7 +87,7 @@ resource "kubernetes_deployment" "service2" {
 
           startup_probe {
             http_get {
-              path = "/actuator/health/liveness"
+              path = "/api/db/health"
               port = 8081
             }
             failure_threshold = 30
@@ -94,7 +96,7 @@ resource "kubernetes_deployment" "service2" {
 
           liveness_probe {
             http_get {
-              path = "/actuator/health/liveness"
+              path = "/api/db/health"
               port = 8081
             }
             initial_delay_seconds = 40
@@ -103,7 +105,7 @@ resource "kubernetes_deployment" "service2" {
 
           readiness_probe {
             http_get {
-              path = "/actuator/health/readiness"
+              path = "/api/db/health"
               port = 8081
             }
             initial_delay_seconds = 30

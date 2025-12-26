@@ -1,4 +1,6 @@
 resource "kubernetes_persistent_volume_claim" "postgres_pvc" {
+  wait_for_rollout = false
+
   metadata {
     name      = "postgres-pvc"
     namespace = kubernetes_namespace.microservices.metadata[0].name
