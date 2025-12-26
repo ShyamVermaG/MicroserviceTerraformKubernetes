@@ -75,16 +75,6 @@ jobs:
         cd terraform
         terraform init
          
-    - name: Import existing resources if missing
-      run: |
-          cd terraform
-          terraform state list | grep -q kubernetes_namespace.microservices || \
-          terraform import kubernetes_namespace.microservices microservices
-          terraform state list | grep -q kubernetes_deployment.service1 || \
-          terraform import kubernetes_deployment.service1 microservices/service1
-          terraform state list | grep -q kubernetes_deployment.service2 || \
-          terraform import kubernetes_deployment.service2 microservices/service2
-   
 
     - name: Terraform Apply
       run: |
