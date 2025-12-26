@@ -18,7 +18,10 @@ resource "kubernetes_deployment" "service2" {
     }
   }
   lifecycle {
-    prevent_destroy = true
+    ignore_changes = [
+      spec[0].template[0].spec[0].container[0].resources,
+      metadata[0].annotations
+    ]
   }
 
 
@@ -42,7 +45,7 @@ resource "kubernetes_deployment" "service2" {
         container {
           name  = "service2"
           image = var.service2_image
-          image_pull_policy = "Always"
+          image_pull_policy = "IfNotPresent"
 
           port {
             container_port = 8081

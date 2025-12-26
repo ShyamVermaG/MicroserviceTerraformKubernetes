@@ -27,6 +27,10 @@ resource "kubernetes_deployment" "postgres" {
       app = "postgres"
     }
   }
+  lifecycle {
+    prevent_destroy = true
+  }
+
 
   spec {
     replicas = 1
