@@ -1,7 +1,7 @@
-resource "kubernetes_persistent_volume_claim_v1" "postgres_pvc" {
+resource "kubernetes_persistent_volume_claim" "postgres_pvc" {
   metadata {
     name      = "postgres-pvc"
-    namespace = kubernetes_namespace_v1.microservices.metadata[0].name
+    namespace = kubernetes_namespace.microservices.metadata[0].name
   }
 
   spec {
@@ -18,11 +18,11 @@ resource "kubernetes_persistent_volume_claim_v1" "postgres_pvc" {
 }
 
 resource "kubernetes_deployment" "postgres" {
-  depends_on = [kubernetes_persistent_volume_claim_v1.postgres_pvc]
+  depends_on = [kubernetes_persistent_volume_claim.postgres_pvc]
 
   metadata {
     name      = "postgres"
-    namespace = kubernetes_namespace_v1.microservices.metadata[0].name
+    namespace = kubernetes_namespace.microservices.metadata[0].name
     labels = {
       app = "postgres"
     }
@@ -78,7 +78,7 @@ resource "kubernetes_deployment" "postgres" {
           name = "pgdata"
 
           persistent_volume_claim {
-            claim_name = kubernetes_persistent_volume_claim_v1.postgres_pvc.metadata[0].name
+            claim_name = kubernetes_persistent_volume_claim.postgres_pvc.metadata[0].name
           }
         }
       }
@@ -89,7 +89,7 @@ resource "kubernetes_deployment" "postgres" {
 resource "kubernetes_service" "postgres" {
   metadata {
     name      = "postgres"
-    namespace = kubernetes_namespace_v1.microservices.metadata[0].name
+    namespace = kubernetes_namespace.microservices.metadata[0].name
   }
 
   spec {
