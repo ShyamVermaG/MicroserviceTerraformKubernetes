@@ -78,6 +78,9 @@ jobs:
       run: |
         cd terraform
         export TF_LOG=TRACE
+        -var="project_id=glowing-thunder-479313-p3" \
+        -var="service1_image=asia-south1-docker.pkg.dev/glowing-thunder-479313-p3/my-repo/service1:1.0" \
+        -var="service2_image=asia-south1-docker.pkg.dev/glowing-thunder-479313-p3/my-repo/service2:1.0" \
         terraform import kubernetes_deployment.service1 microservices/service1
         terraform import kubernetes_service.service1 microservices/service1
 

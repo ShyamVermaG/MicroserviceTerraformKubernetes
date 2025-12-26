@@ -17,7 +17,7 @@ resource "kubernetes_persistent_volume_claim_v1" "postgres_pvc" {
   }
 }
 
-resource "kubernetes_deployment_v1" "postgres" {
+resource "kubernetes_deployment" "postgres" {
   depends_on = [kubernetes_persistent_volume_claim_v1.postgres_pvc]
 
   metadata {
@@ -86,7 +86,7 @@ resource "kubernetes_deployment_v1" "postgres" {
   }
 }
 
-resource "kubernetes_service_v1" "postgres" {
+resource "kubernetes_service" "postgres" {
   metadata {
     name      = "postgres"
     namespace = kubernetes_namespace_v1.microservices.metadata[0].name
