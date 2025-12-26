@@ -10,7 +10,5 @@ terraform {
 }
 
 provider "kubernetes" {
-  host                   = var.kube_host
-  token                  = var.kube_token
-  cluster_ca_certificate = base64decode(var.kube_ca)
+  config_path = "~/.kube/config"
 }
