@@ -73,7 +73,7 @@ jobs:
     - name: Terraform Init
       run: |
         cd terraform
-        terraform init -upgrade
+        terraform init 
 
     - name: Terraform Apply
       run: |
