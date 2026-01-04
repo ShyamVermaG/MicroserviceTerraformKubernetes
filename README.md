@@ -1,4 +1,4 @@
-# Java 17 Microservices with PostgreSQL and Kubernetes
+#  Microservices with PostgreSQL and Kubernetes
 
 This project consists of two Java 17 microservices:
 - **Service 1**: REST API service that calls Service 2
@@ -198,5 +198,4 @@ kubectl delete -f k8s/
 - Service 1 uses LoadBalancer type for external access (use port-forward on Docker Desktop)
 - Images are built locally and use `imagePullPolicy: Never`
 - Health checks are configured for both services
-
-"# MicroserviceTerraformKubernetes" 
+ 
